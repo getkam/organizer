@@ -2,38 +2,61 @@ import sqlite3
 from datetime import date
 from config import DATABASE_PATH
 from typing import Literal
+from models.task import Task
 
 class DatabaseHandler():
     
     def __init__(self):
         self.connection = sqlite3.connect(DATABASE_PATH)
         
-
-
     def get_conn(self): 
         '''Creating connection fo database'''
         self.connection.row_factory = sqlite3.Row
         return self.connection
 
-    def add_task_db(self, description: str, due_date: date = date.today(), priority: Literal[1,2,3] = 2): 
+    def add_task_db(self, task: Task): 
         '''Add new task to database'''
         with self.get_conn() as connection:
             cursor = connection.cursor()
             cursor.execute('''
                         INSERT INTO tasks(description, due_date, priority, is_done) VALUES(?,?,?,?)
                         ''',
-                        (description, due_date, priority, 0)
+                        (task.description, task.due_date, task.priority, task.is_done)
                         )
             connection.commit()
 
-    def get_tasks(self):
+    def get_task_by_id(self, id:int) -> Task:
+        '''Retrieving one record fr if provided id existing in database'''
+        with self.get_conn() as connection:
+            cursor = connection.cursor()
+            cursor.execute("SELECT id, description, due_date, priority, is_done FROM tasks WHERE id = ?", [id])
+            row = cursor.fetchone()
+            if row:
+                return Task(
+                    task_id = row['id'], 
+                    description = row['description'], 
+                    due_date = row['due_date'],
+                    priority = row['priority'], 
+                    is_done = row['is_done']
+                )
+            else:
+                raise ValueError(f"Task with id {id} doesn't exist")
+        
+    def get_tasks(self)->list[Task]:
         '''Retrieving all tasks from data base'''
         with self.get_conn() as connection:
             cursor = connection.cursor();
             cursor.execute('''
                             SELECT id, description, due_date, priority, is_done FROM tasks
                         ''')
-            return cursor.fetchall()
+            rows = cursor.fetchall()
+            return [Task (
+                task_id = row['id'], 
+                    description = row['description'], 
+                    due_date = row['due_date'],
+                    priority = row['priority'], 
+                    is_done = row['is_done']
+            ) for row in rows]
 
     def delete_tasks_db(self, task_ids):
         '''Deleting tasks from database'''
