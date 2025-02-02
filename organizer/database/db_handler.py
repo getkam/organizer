@@ -1,22 +1,21 @@
 import sqlite3
-from datetime import date
-from config import DATABASE_PATH
-from typing import Literal
-from models.task import Task
+from organizer.models.task import Task
 
+
+DATABASE_PATH = "database/organizer.db"
 class DatabaseHandler():
     
-    def __init__(self):
-        self.connection = sqlite3.connect(DATABASE_PATH)
-        
-    def get_conn(self): 
-        '''Creating connection fo database'''
+    def __init__(self, db_path: str = DATABASE_PATH):
+        self.connection = sqlite3.connect(db_path, detect_types=sqlite3.PARSE_DECLTYPES)
         self.connection.row_factory = sqlite3.Row
-        return self.connection
+    
+    def close_connection(self):
+        '''Closing connection to database'''
+        self.connection.close
 
-    def add_task_db(self, task: Task): 
+    def add_task(self, task: Task): 
         '''Add new task to database'''
-        with self.get_conn() as connection:
+        with self.connection as connection:
             cursor = connection.cursor()
             cursor.execute('''
                         INSERT INTO tasks(description, due_date, priority, is_done) VALUES(?,?,?,?)
@@ -27,7 +26,7 @@ class DatabaseHandler():
 
     def get_task_by_id(self, id:int) -> Task:
         '''Retrieving one record fr if provided id existing in database'''
-        with self.get_conn() as connection:
+        with self.connection as connection:
             cursor = connection.cursor()
             cursor.execute("SELECT id, description, due_date, priority, is_done FROM tasks WHERE id = ?", [id])
             row = cursor.fetchone()
@@ -44,7 +43,7 @@ class DatabaseHandler():
         
     def get_tasks(self)->list[Task]:
         '''Retrieving all tasks from data base'''
-        with self.get_conn() as connection:
+        with self.connection as connection:
             cursor = connection.cursor();
             cursor.execute('''
                             SELECT id, description, due_date, priority, is_done FROM tasks
@@ -58,22 +57,22 @@ class DatabaseHandler():
                     is_done = row['is_done']
             ) for row in rows]
 
-    def delete_tasks_db(self, task_ids):
+    def delete_tasks(self, task_ids):
         '''Deleting tasks from database'''
         if not task_ids:
             #print("No task to delete")
             return
         placeholders = ', '.join('?' for _ in task_ids)
-        with self.get_conn() as connection:
+        with self.connection as connection:
             cursor = connection.cursor()
             cursor.execute(f'''
                             DELETE FROM tasks WHERE id IN ({placeholders})
                             ''',task_ids)
             connection.commit()
 
-    def mark_task_done_db(self, id: int):
+    def mark_task_done(self, id: int):
         '''Updating column "Done" for provided task id'''
-        with self.get_conn() as connection:
+        with self.connection as connection:
             cursor = connection.cursor()
             if self.id_exist(id):
                 cursor.execute('''
@@ -87,7 +86,7 @@ class DatabaseHandler():
     
     def id_exist(self, id:int) -> bool:
         '''Checking if provided id existing in database'''
-        with self.get_conn() as connection:
+        with self.connection as connection:
             cursor = connection.cursor()
             cursor.execute("SELECT id FROM tasks WHERE id = ?", [id])
             return len(cursor.fetchall()) == 1 

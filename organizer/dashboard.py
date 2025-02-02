@@ -1,6 +1,6 @@
 from rich.console import Console
 from rich.table import Table
-from database.db_handler import DatabaseHandler
+from organizer.database.db_handler import DatabaseHandler
 from datetime import date
 
 database_handler = DatabaseHandler()
