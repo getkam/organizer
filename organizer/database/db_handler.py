@@ -60,8 +60,7 @@ class DatabaseHandler():
     def delete_tasks(self, task_ids):
         '''Deleting tasks from database'''
         if not task_ids:
-            #print("No task to delete")
-            return
+            raise ValueError("Provide tasks to delete")
         placeholders = ', '.join('?' for _ in task_ids)
         with self.connection as connection:
             cursor = connection.cursor()
