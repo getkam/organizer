@@ -1,15 +1,18 @@
-
 from datetime import date
+from timezone.timezone_service import time_service
 import typer
+
 from dashboard import show_dashboard
 from tasks.task_handler import TaskHandler
 from database.db_handler import DatabaseHandler
-from timezone.timezone_service import time_service
+
+
+db_handler = DatabaseHandler()
+task_handler = TaskHandler(db_handler)
 
 app = typer.Typer()
-task_handler = TaskHandler()
-db_handler = DatabaseHandler()
 message = None
+
 
 @app.command()
 def time(continent: str, city:str):
@@ -32,6 +35,7 @@ def add(description:str,
         message = e
     show_dashboard(message)
 
+
 @app.command()
 def delete(id:int):
     global message
@@ -40,6 +44,7 @@ def delete(id:int):
     except ValueError as e:
         message = e
     show_dashboard(message)
+
 
 @app.command()
 def delete_done():
@@ -50,10 +55,12 @@ def delete_done():
         message = e
     show_dashboard(message)
 
+
 @app.command()
 def show():
     global message
     show_dashboard(message)
+
 
 @app.command()
 def done(id:int):
@@ -64,6 +71,7 @@ def done(id:int):
     except ValueError as e:
         message = e
     show_dashboard(message)
+
 
 if __name__ == "__main__":
    app()

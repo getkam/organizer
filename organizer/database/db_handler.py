@@ -1,4 +1,5 @@
 import sqlite3
+
 from organizer.models.task import Task
 
 
@@ -50,11 +51,11 @@ class DatabaseHandler():
                         ''')
             rows = cursor.fetchall()
             return [Task (
-                task_id = row['id'], 
-                    description = row['description'], 
-                    due_date = row['due_date'],
-                    priority = row['priority'], 
-                    is_done = row['is_done']
+                        task_id = row['id'], 
+                        description = row['description'], 
+                        due_date = row['due_date'],
+                        priority = row['priority'], 
+                        is_done = row['is_done']
             ) for row in rows]
 
     def delete_tasks(self, task_ids):
@@ -65,8 +66,8 @@ class DatabaseHandler():
         with self.connection as connection:
             cursor = connection.cursor()
             cursor.execute(f'''
-                            DELETE FROM tasks WHERE id IN ({placeholders})
-                            ''',task_ids)
+                DELETE FROM tasks WHERE id IN ({placeholders})
+                ''',task_ids)
             connection.commit()
 
     def mark_task_done(self, id: int):

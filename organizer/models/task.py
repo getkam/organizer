@@ -8,4 +8,3 @@ class Task(BaseModel):
   due_date: Optional[date] = date.today() 
   priority: Optional[Literal[1, 2, 3]] = 2
   is_done: Optional[bool] = False
-
