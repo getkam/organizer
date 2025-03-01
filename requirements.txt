@@ -2,17 +2,19 @@ annotated-types==0.7.0
 certifi==2024.12.14
 charset-normalizer==3.4.1
 click==8.1.8
+coverage==7.6.10
 idna==3.10
 iniconfig==2.0.0
 markdown-it-py==3.0.0
 mdurl==0.1.2
--e git+https://github.com/getkam/organizer.git@b45681be78da09e3bdf201d3bd46b94cdb5df56d#egg=organizer
+-e git+https://github.com/getkam/organizer.git@f31ff0cd7cec40a1f52e10353d077bdc7920afed#egg=organizer
 packaging==24.2
 pluggy==1.5.0
 pydantic==2.10.6
 pydantic_core==2.27.2
 Pygments==2.19.1
 pytest==8.3.4
+python-dotenv==1.0.1
 requests==2.32.3
 rich==13.9.4
 setuptools==75.8.0

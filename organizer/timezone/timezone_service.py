@@ -1,6 +1,7 @@
 import requests
 
 def time_service(continent: str, city:str):
+    LOCATIONS = ["Europe%2FLondon", "America%2FNew_york", "Asia%2FKolkata"]
     url = f"https://timeapi.io/api/time/current/zone?timeZone={continent}%2F{city}"
     try:
         response = requests.get(url)

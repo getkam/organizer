@@ -1,5 +1,5 @@
 from datetime import date
-from timezone.timezone_service import time_service
+
 import typer
 
 from dashboard import show_dashboard
@@ -12,11 +12,6 @@ task_handler = TaskHandler(db_handler)
 
 app = typer.Typer()
 message = None
-
-
-@app.command()
-def time(continent: str, city:str):
-    time_service(continent, city)
 
 
 @app.command()
